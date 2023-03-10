@@ -1,0 +1,28 @@
+{% load static %}
+
+<div style="border-radius: 20px; margin: 20px; padding: 10px; width: 200px;">
+  <a
+  class="playlist_detail_link"
+  href="{% url 'modals:playlist' playlist_id=playlist.pk %}"
+  data-modal_content-url="{% url 'modals:playlist' playlist_id=playlist.pk %}">
+  {% if playlist.image is None %}
+  <img style="border-radius: 20px" src="{% static 'empty_playlist.png' %}" width="200" height="200">
+  {% else %}
+  <img style="border-radius: 20px; border-color: black;" src="{{ playlist.image }}" width="200" height="200" >
+  {% endif %}
+</a>
+<h3 style="overflow-x: auto; overflow-y: hidden; min-width: 200px;">{{ playlist.playlist_name }}</h3>
+
+<div style="display:inline-block;vertical-align:top;">
+  {% if playlist.creator.profile_picture == "" %}
+  <img src="{% static 'Default.png' %}" style="border-radius: 50%; display: block;" width="25" height="25">
+  {% else %}
+  <img src="/media/{{ playlist.creator.profile_picture }}" style="border-radius: 50%; display: block;" width="25" height="25">
+  {% endif %}
+</div>
+<div style="display:inline-block;">
+  <p>
+    <a style="color:grey" href=http://127.0.0.1:8000/account/profile/{{ playlist.creator }}>{{ playlist.creator }}</a>
+  </p>
+</div>
+</div>

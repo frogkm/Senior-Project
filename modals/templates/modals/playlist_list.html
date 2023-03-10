@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>
+  Select a Playlist
+</h1>
+
+<br>
+
+<ul>
+{% for playlist in playlists %}
+  <li>
+    <a
+    class="playlist_detail_link"
+    href="{% url 'modals:playlist' playlist_id=playlist.pk %}"
+    data-modal_content-url="{% url 'modals:playlist' playlist_id=playlist.pk %}"
+    >{{ playlist.playlist_name }}</a>
+  </li>
+{% endfor %}
+</ul>
+
+{% endblock %}

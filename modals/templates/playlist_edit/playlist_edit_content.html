@@ -1,0 +1,65 @@
+<div class="container-fluid">
+  {% if new_playlist %}
+  <h1>Create Playlist</h1>
+  {% else %}
+  <h1>Edit Playlist</h1>
+  {% endif %}
+
+  <br>
+
+  <form id="playlist_edit" action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    {% if new_playlist %}
+    <input type="submit" class="btn btn-primary" value="Create">
+    {% else %}
+    <input type="submit" class="btn btn-primary" value="Save">
+    {% endif %}
+
+    <p id="confirmation"></p>
+  </form>
+
+{% if new_playlist %}
+<script>
+  $(function(){
+    $('#playlist_edit').on('submit', function(e){
+      e.preventDefault();
+      $.post("{% url 'modals:playlist_edit_save' %}", $('#playlist_edit').serialize(), function(data, status, xhr){
+          $("#confirmation").html("Created!");
+
+          //Hide edit(create)-playlist modal
+          $('#playlist_edit_modal').modal('hide');
+          history.go(0);
+      });
+    });
+  });
+</script>
+{% else %}
+<script>
+  $(function(){
+    $('#playlist_edit').on('submit', function(e){
+      e.preventDefault();
+      $.post("{% url 'modals:playlist_edit_save' playlist_id=playlist.pk %}", $('#playlist_edit').serialize(), function(data, status, xhr){
+          $("#confirmation").html("Saved!");
+          //Reload playlist detail modal
+          $.ajax({
+            url: '/modals/playlist_detail/' + $('#playlist_detail_modal #playlist_container').data("playlist-id"),
+            success: function(data) {
+              $('#playlist_container').html(data);
+            }
+          });
+
+          //Would like to reload main page here, but can't figure out how to do that without closing modals
+
+          //Hide edit-playlist modal
+          $('#playlist_edit_modal').modal('hide');
+
+      });
+    });
+  });
+</script>
+{% endif %}
+
+</div>
+

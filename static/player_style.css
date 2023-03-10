@@ -1,0 +1,62 @@
+#player{
+    background-color: #6a5acd; 
+    height:100px;
+    text-align:center;
+    z-index:1060;
+}
+
+.text-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player_btn{
+    margin-top:6px;
+    margin-bottom:10px;
+    width:35px;
+    height:35px;
+
+}
+.player_btn:hover{
+    opacity: 0.7;
+}
+
+.player_btn:active{
+    opacity: 0.15;
+}
+
+
+#left-img{
+    transform: scaleX(-1);
+}
+#right-img{
+
+}
+#play-img{
+    margin-left:27px; margin-right:20px;
+}
+
+.form-range{
+    width:35%;
+}
+
+#next-song-lbl {
+    overflow-x: auto;
+    white-space:nowrap;
+}
+#prev-song-lbl {
+    overflow-x: auto;
+    white-space:nowrap;
+}
+#curr-playlist-lbl {
+    overflow-x: auto;
+    white-space:nowrap;
+}
+#curr-song-lbl {
+    overflow-x: auto;
+    white-space:nowrap;
+}
+
+
+

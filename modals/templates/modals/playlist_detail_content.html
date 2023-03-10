@@ -1,0 +1,94 @@
+{% load static %}
+<div id="playlist_container" class="container-fluid" data-playlist-id="{{ playlist.pk }}"style="background-color:aliceblue">
+
+  <!--<br><br><br><br><br><br><br>
+
+  <div class="row" style=" position:fixed; padding: 2em; left: 50%; top: 0%; transform: translateX(-50%); background-color: white; border-color: black; border-radius: 1px; border-style: solid;">-->
+  <div class="row">
+    <!--
+    <div style="background-color:red;" class="col-sm-3">
+      <p>(Playlist Image)</p>
+    </div>-->
+    <div class="col-sm">
+      <h2 class="text-primary">{{ playlist_name }} </h2>
+      <h3><a style="color:grey" href=http://127.0.0.1:8000/account/profile/{{ creator }}>{{ creator }}</a></h3>
+    </div>
+    <div class="col-sm-3">
+      {% if user.account == playlist.creator %}
+      <a class="song_search_link badge badge-primary" style="font-size: 125%; margin-bottom: 3%" href="{% url 'modals:song_search' %}" data-modal_content-url="{% url 'modals:song_search' %}">+Add Songs</a>
+      <a
+        class="playlist_edit_link badge badge-secondary" style="font-size: 125%"
+        href="{% url 'modals:playlist_edit' playlist_id=playlist.pk %}"
+        data-modal_content-url="{% url 'modals:playlist_edit' playlist_id=playlist.pk %}"
+        >Edit Playlist
+      </a>
+      <a href = # class = "playlist_delete badge badge-danger" id = "delete" style="font-size: 125%; margin-top: 3%" >
+        Delete Playlist
+      </a>
+      <script>
+        $(function(){
+          $('#delete').on('click', function(e){
+            e.preventDefault();
+            $.post("{% url 'modals:playlist_delete' playlist_id=playlist.pk %}", {csrfmiddlewaretoken: "{{ csrf_token }}"}, function(data, status, xhr){
+              $("#confirmation").html("Deleted Successfully");
+            });
+            history.go(0);
+          });  
+        });
+      </script>
+      {% else %}
+      <a href="#" id="save_copy" class="badge badge-success" style="font-size: 125%; margin-bottom: 3%">+Save a Copy</a>
+      <p id="confirmation" style="color:green"></p>
+      <script>
+        $(function(){
+          $('#save_copy').on('click', function(e){
+            e.preventDefault();
+            $.post("{% url 'modals:playlist_save_copy' playlist_id=playlist.pk %}", {csrfmiddlewaretoken: "{{ csrf_token }}"}, function(data, status, xhr){
+                $("#confirmation").html("Private copy saved");
+            });
+          });
+        });
+      </script>
+
+      {% endif %}
+    </div>
+  </div>
+
+  <img id="play-playlist-img" src ="https://cdn-icons-png.flaticon.com/128/5577/5577228.png" width="50" height="50">
+  <img id="shuffle-playlist-img" src ="http://cdn.onlinewebfonts.com/svg/img_573906.png" width="50" height="50">
+
+  <div class="row mt-3">
+    {% include "modals/playlist_detail_table.html" %}
+  </div>
+
+{% comment %} Playlist Audio Player {% endcomment %}
+<script>
+  $(document).ready(function() {
+    setupPlaylistButtons("{{ playlist.pk }}", "{{ playlist.playlist_name }}", "{{ serialized_tracks }}");
+  });
+</script>
+</div>
+
+<script>
+  $(document).ready(function(){
+    const deleteButtons = document.getElementsByClassName('delete-song');
+    for (i = 0; i < deleteButtons.length; i++) {
+      const deleteButton = deleteButtons[i];
+      $(deleteButton).on("click", (function (e) {
+        $.ajax({
+          type: 'POST',
+          url: "/modals/playlist_delete_track/" + "{{ playlist.pk }}/" + deleteButton.id,
+          data: {csrfmiddlewaretoken: "{{ csrf_token }}", playlist_id: "{{ playlist.pk }}", track_id: deleteButton.id},
+          success: function() {
+            $.ajax({
+              url: '/modals/playlist_detail/' + "{{ playlist.pk }}",
+              success: function(data) {
+                $('#playlist_container').html(data);
+              }
+            });
+          }
+        });
+      }));
+    }
+  })
+</script>

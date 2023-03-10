@@ -1,0 +1,22 @@
+{% if songs %}
+<body>
+    <div style="justify-content: space-between; border-radius: 20px;" class="row border">
+
+        <div id="many_rec" style="justify-content: space-between; white-space: nowrap; overflow-x:auto; display:flex" >
+            {% for track in songs %}
+                {% include 'recommender/song_demo.html' %}
+                <br>
+                <input type="checkbox" class="song-check" id="{{ track.id }}">
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+{% else %}
+<p>No Songs Found</p>
+{% endif %}
+
+<script>
+    setupDemoButtons();
+</script>

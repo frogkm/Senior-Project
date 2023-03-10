@@ -1,0 +1,36 @@
+{% load static %}
+{% if track.preview_url is None %}
+<div style="margin: 20px;">
+    <h3>Failed to Load</h3>
+</div>
+{% else %}
+
+<style>
+  .enqueue-song-img:hover{opacity: 0.7;}
+  .enqueue-song-img:active{opacity: 0.15;}
+  .play-song-img:hover{opacity: 0.7;}
+  .play-song-img:active{opacity: 0.15;}
+
+  .scroll::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+</style>
+<div style="margin: 20px; padding: 10px; width: 200;">
+<a  
+  class="open-song"
+  href="{% url 'modals:song' track_curr_id=track.id %}"
+  data-popup-url="{% url 'modals:song' track_curr_id=track.id %}"
+  data-song="{{track.id}}">
+<img style="border-radius: 20px" src="{{ track.image }}" width="200" height="200">
+</a>
+
+
+<h3 class = "scroll" style="overflow-x: auto; font-size: 1.5vw; width: 200px;">{{ track.name }}</h3>
+<p>{{ track.artist }}</p>
+<img class="play-song-img" data-track-name="{{ track.name }}" data-track-duration="{{ track.duration_ms }}" id="rc-{{ track.preview_url }}+MergedValues+{{track.id}}" src="{% static 'demo_play.png' %}" width="50" height="50">
+{% if user.is_authenticated %}
+<img class="enqueue-song-img" src="{% static 'demo_queue.png' %}" width="50" height="50">
+{% endif %}
+</div>
+{% endif %}

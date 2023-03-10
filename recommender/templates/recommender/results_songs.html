@@ -1,0 +1,74 @@
+{% load static %}
+{% if songs %}
+    <div style="height: 450px; justify-content: space-between; border-radius: 20px;" class="row border">
+        {% if songs|length > 2 %}
+            <div id="many_rec" style="justify-content: space-between; white-space: nowrap; overflow-x:auto; display:flex" >
+        {% endif %}
+        {% for track in songs %}
+            {% include 'recommender/song_demo.html' %}
+        {% endfor %}
+        {% if songs|length > 2 %}
+            </div>
+        {% endif %} 
+    </div>
+    {% if user.is_authenticated %}
+    <script>
+        setupDemoButtons();
+    </script>
+    {% else %}
+    <script>
+
+        function setupDemoButtonsNoUser() {
+            const playImgs = document.getElementsByClassName('play-song-img');
+            let audio_player = $('#audio-player');
+
+            for (i = 0; i < playImgs.length; i++) {
+                const playImg = playImgs[i];
+                const previewSrc = playImg.id.substring(3, playImg.id.indexOf("+MergedValues+"));
+                const trackId = playImg.id.substring(playImg.id.indexOf("+MergedValues+") + 14);
+
+                $(playImg).on("click", (function (e) {  //When play button is clicked
+
+                    if (audio_player[0].src === previewSrc && !audio_player[0].paused) {  //If already playing this song and play button is clicked
+                        playImg.src = "{% static 'demo_play.png' %}"; 
+                        $('#audio-player')[0].pause();
+
+                    } 
+                    else {  
+
+                        $.ajax({
+                            type: 'POST',
+                            url: "/recommender/update_recent_songs/" + trackId,
+                            data: {csrfmiddlewaretoken: "{{ csrf_token }}", track_curr_id: trackId},
+                        });
+
+                        if (audio_player[0].src === previewSrc) {  //If song clicked was already paused
+                            playImg.src = "{% static 'demo_pause.png' %}";  
+                            audio_player[0].play();
+
+                        } else {  //New song clicked
+                            for (j = 0; j < playImgs.length; j++) {
+                                playImgs[j].src = "{% static 'demo_play.png' %}"; //Pause all other demos
+                            }
+                            playImg.src = "{% static 'demo_pause.png' %}";
+                            
+                            
+                            audio_player[0].src = previewSrc;
+                            audio_player[0].play();
+
+                        }
+                    }
+                }));
+
+
+            }
+
+        }
+
+        setupDemoButtonsNoUser();
+        
+    </script>
+    {% endif %}
+{% else %}
+    <p>No Songs Found</p>
+{% endif %}

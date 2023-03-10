@@ -1,0 +1,44 @@
+<br>
+<center>
+    <h2>Song Search</h2>
+
+    <br>
+    <input id="song-search-field" class="form-control" type="text"
+    name="song" hx-get="{% url 'modals:song_search' %}" 
+    hx-trigger="keyup" hx-target="#song-search-results">
+    </input>
+    <br>
+    
+    <div id="song-search-results">
+    </div>
+</center>
+<br>
+  
+<script type="text/javascript">
+    $(document).ready(function(){
+        function delay(callback, ms) {
+            var timer = 0;
+            return function() {
+                var context = this, args = arguments;
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                callback.apply(context, args);
+                }, ms || 0);
+            };
+        }
+        $("#song-search-field").on("keyup", delay(function (e) {
+            e.preventDefault();
+            var searchValue = $("#song-search-field").val();
+            var url = "/modals/song_search_results/" + searchValue;
+            var type = $(this).attr('method');
+            $.ajax({
+                url: url,
+                type: type,
+                success: function (data) {
+                    $('#song-search-results').html(data);
+                }
+            });
+        }, 750));
+
+    });
+</script>

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %} Edit Profile {% endblock %}
+
+{% block content %}
+
+<br>
+<h1>Edit Profile</h1>
+
+<form method='post' class="form">
+    {% csrf_token %}
+    <br>
+    {{ form.as_p }}
+    <a href="/account/password" class="btn btn-primary btn-md" >Change Password</a>
+    <button class="btn btn-primary btn-md" type="submit">
+        Save Changes
+    </button>   
+</form>
+<br>
+
+{% endblock %}

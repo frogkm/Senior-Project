@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %} Login {% endblock %}
+
+{% block content %}
+
+<form method='post' class="form">
+    {% csrf_token %}
+    <br>
+    {% comment %} {{ form.as_p }} {% endcomment %}
+    {% for field in form %}
+        <div style="flex-direction: row;">
+            {% if field.html_name == "password" %}
+                <div style="height: 15px;"></div>
+            {% endif %}
+            <span>{{ field.html_name.title }}:</span>
+            <div style="height: 10px;"></div>
+            
+            {% if field.value is not None %}
+                {% if field.html_name == "password" %}   
+                    <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" value="{{ field.value }}" type="password" /> 
+                    {{ field.errors }}
+                {% else %}
+                    <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" value="{{ field.value }}" type="text" /> 
+                    {{ field.errors }}
+                {% endif %}
+            {% else %}
+                {% if field.html_name == "password" %}
+                    <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" value="" type="password" /> 
+                    {{ field.errors }}
+                {% else %}
+                    <input class="form-control" id="{{ field.id_for_label }}" maxlength="30" name="{{ field.html_name }}" value="" type="text" /> 
+                    {{ field.errors }}
+                {% endif %}
+            {% endif %}
+        </div>
+        {% endfor %}
+    <div style="height: 15px;"></div>
+    <button class="btn btn-primary btn-md" type="submit">
+        Login
+    </button>   
+</form>
+<br>
+
+{% endblock %}

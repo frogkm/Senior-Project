@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %} Home Page {% endblock %}
+
+{% block content %}
+</br>
+
+<h2>Search Songs</h2>
+
+<br>
+    <input class="form-control" type="text"
+    name="song" hx-get="{% url 'recommender:get_home' %}" 
+    hx-trigger="keyup delay:1s" hx-target="#search-results">
+    </input>
+    <br>
+
+    <div id="search-results">
+ </div>
+
+ {% if user.is_authenticated %}
+ <div style = "height: 850px" class= "container-lg">
+    {% if recommender_song != None %}
+        <h2>Recommendations (Because You Liked: {{ recommender_song }})</h2>
+    {% else %}
+        <h2>Recommendations</h2>
+    {% endif %}
+     
+    <div style="height: 400px; justify-content: space-between; border-radius: 20px; border:3px solid #C0C0C0;" class="row">
+        {% if recommendation_tracks|length > 0 %}
+            <div id="many_rec" style="justify-content: space-between; white-space: nowrap; overflow-x:auto; display:flex" >
+                {% for track in recommendation_tracks %}
+                {% include 'recommender/song_demo.html' %}
+                {% endfor %}    
+            </div>
+         {% else %}
+             <p>No Recommendations Found</p>
+         {% endif %}
+     </div>
+        <div style="height: 50px;"></div>
+
+
+        <h2>Listening History</h2>        
+        <div style="height: 400px; justify-content: space-between; border-radius: 20px; border:3px solid #C0C0C0;" class="row">
+            {% if recent_tracks|length > 0 %}
+                <div id="many_recent" style="justify-content: space-between; white-space: nowrap; overflow-x:auto; display:flex" >
+                    {% for track in recent_tracks %}
+                        {% include 'recommender/song_demo.html' %}
+                    {% endfor %} 
+                </div>       
+            {% else %}
+                <h3 style="padding: 20px;">Listen to Some Songs to Generate a Listening History!</h3>
+            {% endif %}
+
+        </div>
+
+        <div style="height: 50px;"></div>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,40 @@
+<br>
+<center>
+    <h2>Name Change</h2>
+    <br>
+    <input id="search-field" class="form-control" type="text"
+    name="song" hx-get="{% url 'modals:playlist_name' %}" 
+    hx-trigger="keyup" hx-target="#search-results">
+    </input>
+    <br>
+    </div>
+</center>
+<br>
+  
+<script type="text/javascript">
+    $(document).ready(function(){
+        function delay(callback, ms) {
+            var timer = 0;
+            return function() {
+                var context = this, args = arguments;
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                callback.apply(context, args);
+                }, ms || 0);
+            };
+        }
+    });
+    $("#search-field").on("keyup", delay(function (e) {
+            e.preventDefault();
+            var searchValue = $("#search-field").val();
+            $.ajax({
+
+                success: function (playlist_name) {
+                 playlist_name.apply(searchValue);
+                }
+               
+            });
+        }, 750));
+
+    
+</script>

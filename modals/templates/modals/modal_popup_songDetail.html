@@ -1,0 +1,119 @@
+{% load static %}
+{% block content %}
+<style>
+.like_button {
+    background-size: cover; 
+    width: 50px; 
+    height: 50px;
+    display: flex;
+}
+.dislike_button {
+    background-size: cover; 
+    width: 50px; 
+    height: 50px;
+    display: flex;
+}
+
+.tableButtons {
+    width: 100px;
+    height:400px;
+}
+</style>
+
+<div id="popupSong" class="modal fade" data-backdrop="auto" role="dialog" style="max-height: 80%; overflow-y: auto;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        <table>
+            <tr>
+                <td>
+                    <div class="modal-body">
+                    </div>
+                </td>
+                <td>
+                    <table class="tableButtons">
+                        <tr>
+                            <td>                     
+                            <img class="like_button" id="thumbsUp" src ="{% static 'ThumbUp.png' %}">
+                            </td> 
+                        </tr>
+                        <tr>
+                            <td>                           
+                            <img class="dislike_button" id="thumbsDown" src ="{% static 'ThumbDown.png' %}">
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-info" data-dismiss="modal">Close
+            </button>
+            
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        $("#popupSong").on("shown.bs.modal", function(e) {
+            localStorage.setItem("status", "none");
+            var track = localStorage.getItem("song");
+            $.ajax({
+                url: '/modals/likeStatus/' + track,
+                type: 'GET',
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+                dataType: 'json',
+                success: function(res) {
+                    console.log(res["success"]);
+                    localStorage.setItem("status", res["success"]);
+                    updateImages();
+                }
+            });
+        });
+        //Run javascript function that when a button is clicked the post request is sent with the track id gathered 
+        //from local storage
+        $("#thumbsUp").on("click", (function (e) {
+            var track = localStorage.getItem("song");
+            $.ajaxSetup({
+              data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+            $.ajax({
+              type:'POST',
+              url: "/modals/like_dislike/"+track+"/"+"like",
+              success: function(res) {
+                    localStorage.setItem("status", res["success"]);
+                    updateImages();
+                }
+            });
+        }));
+        $("#thumbsDown").on("click", (function (e) {
+            var track = localStorage.getItem("song");
+            $.ajaxSetup({
+              data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+            });
+            $.ajax({
+              type:'POST',
+              url: "/modals/like_dislike/"+track+"/"+"dislike",
+              success: function(res) {
+                    localStorage.setItem("status", res["success"]);
+                    updateImages();
+                }
+            });
+        }));
+
+        function updateImages(){
+            var status = localStorage.getItem("status");
+            if(status == "liked"){
+                document.getElementById("thumbsUp").src="{% static 'ThumbUpFilled.png' %}";
+            }
+            else{
+                document.getElementById("thumbsUp").src="{% static 'ThumbUp.png' %}";
+            }
+            if(status == "disliked"){
+                document.getElementById("thumbsDown").src="{% static 'ThumbDownFilled.png' %}";
+            }
+            else{
+                document.getElementById("thumbsDown").src="{% static 'ThumbDown.png' %}";
+            }
+        };
+    </script>
+    {% endblock %}

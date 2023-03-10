@@ -1,0 +1,22 @@
+{% if empty %}
+
+{% else %}
+    {% if lists %}
+    </br>
+    
+        <h2>Search Results:</h2>
+        <div style=" justify-content: space-between; border-radius: 20px; border: 3px solid #C0C0C0" class="row">
+        <table>
+        <tr> 
+            <div id="many_rec" style="justify-content: left; white-space: nowrap; overflow-x:auto; display:flex" >
+            {% for playlist in lists %}
+            {% include 'playlists/playlist_demo.html' %}
+            {% endfor %}
+        </div>
+        </tr>
+        </table>
+    {% else %}
+    <p>No Search Results</p>
+    {% endif %}
+    </div>
+{% endif %}

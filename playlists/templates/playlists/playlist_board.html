@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Playlist Board{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+    <br>
+    <h2>Playlist Search</h2>
+
+    <br>
+    <input class="form-control" type="text"
+    name="search_playlists" hx-get="{% url 'playlists:playlist_board' %}" 
+    hx-trigger="keyup delay:1s" hx-target="#search-results">
+    </input>
+    <br>
+    
+    <div id="search-results">
+    </div>
+
+    </br>
+    <h2>Playlist Board: </h2>
+    
+    <div style=" justify-content: space-between; border-radius: 20px; border: 3px solid #C0C0C0" class="row">  
+    {% for playlist in playlists %}
+     
+        {% include 'playlists/playlist_demo.html' %}
+    {% endfor %}
+    </div>
+    
+{% else %}
+    <br>
+    <h3>You cannot access this page without being logged in. Please log in and try again.</h3>
+{% endif %}
+
+{% endblock %}

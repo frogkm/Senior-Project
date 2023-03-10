@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Playlist</title>
+    <h1>Playlist Name</h1>
+    <h2>Playlist Creator</h2>
+    <a
+  class="open-modal"
+  tag="open-modal"
+  href="{% url 'modals:song_search' %}"
+  data-popup-url="{% url 'modals:song_search' %}"
+  >Add Songs</a>
+  
+</head>
+
+
+<body>
+<div>
+<h2>Songs</h2>
+{% comment %} This is Where all the Songs will go!{% endcomment %}
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3IznIgmXtrUaoPWpQTy5jB?utm_source=generator" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/7szBZqBJuj9eAC8HJ4CyTM?utm_source=generator" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/21lfQ6cXJF15ubyPLB6qHz?utm_source=generator" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1jbbnDJ54AGBRswmNm5PAw?utm_source=generator" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/19b3xdFJobHrO3iDzaLPb0?utm_source=generator" width="100%" height="80" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+</div>
+</body>  
+<script>
+    // Open Modal
+    $(document).on("click", ".open-modal", function (e) {
+      e.preventDefault();
+      var $popup = $("#popup");
+      var popup_url = $(this).data("popup-url");
+      $(".modal-body", $popup).load(popup_url, function () {
+        $popup.modal("show");
+      });
+    });
+  
+    // Close Modal, and get checkbox values
+    const saveModalBtn = parent.document.getElementById('save-modal');
+    $(saveModalBtn).on("click", function (e) {
+      e.preventDefault();
+      var trackIDs = [];
+      $(".song-check").each(function(i, obj) {
+        trackIDs.push(obj.id + ": " + obj.checked);
+      });
+      $('p.selected-track-ids').html(trackIDs.join(", "));
+      $('#popup').modal('hide');
+    });
+  </script>
+</html>

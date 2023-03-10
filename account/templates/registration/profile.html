@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Profile {% endblock %}
+
+{% block content %}
+
+<br>
+<div style = "height: 250px" class= "container-lg">
+    {% if myProfile %}
+    {% if user.first_name == "" %}
+        <h1>Welcome, {{ user.username }}<a style="float: right; margin-top: 6px;" class="btn btn-primary btn-md" href="/account/edit_profile">Edit Profile</a></h1>
+
+    {% else %}
+        <h1>Welcome, {{ user.first_name }}<a style="float: right; margin-top: 6px;" class="btn btn-primary btn-md" href="/account/edit_profile">Edit Profile</a></h1>
+
+    {% endif %}
+    <div style = "height: 150px; border-style: 20px" class ="row">
+
+        <div style = "height: 200; float: left;" class = "col">
+            {% if profilePic == "" %}
+            <img src="{% static 'Default.png' %}" style="border-radius: 50%; display: block;" width="150" height="150">
+            {% else %}
+            <img src="/media/{{ profilePic }}" style="border-radius: 50%; display: block;" width="150" height="150">
+            {% endif %}
+            <a style="padding-left: 20px;" href="/account/profile_picture">Change Picture</a>
+        </div> 
+        <div style = "height: 150; text-align: right; padding-top: 0px;"class = "col">
+            <h3>Private Playlists: {{ privatePlaylists }}</h3>
+            <h3>Public Playlists: {{ publicPlaylists }}</h3>
+            <h3>Liked Songs: {{ likedSongs }}</h3>     
+            <a style="float: right; margin-bottom: 5px;" class="btn btn-primary btn-md" id="clear_likes" href="/account/edit_profile">Clear Likes/Dislikes</a>
+        </div> 
+    </div>
+</div>   
+
+<div style = "height: 850" class= "container-lg">
+</br>
+    <h2>Song Showcase</h2>
+    <div style="height: 450px; justify-content: space-between; border-radius: 20px; border:3px solid #C0C0C0" class="row">
+            <div id="many_rec" style="justify-content: left; white-space: nowrap; overflow-x:auto; display:flex" >
+                {% if songs|length > 0 %}
+                    {% for track in songs %}
+                        {% include 'recommender/song_demo.html' %}
+                    {% endfor %}
+                {% else %}
+                    <h2 style="padding: 10px;">Add Songs To Song Showcase Below</h2>
+                {% endif %}
+                
+            </div>
+    </div>
+        <div style="line-height:12px; margin-top: 5px;">
+            <br>
+            <br>
+            <a class="song_search_link" href="{% url 'modals:song_search' %}" data-modal_content-url="{% url 'modals:song_search' %}"><p class="text-primary text-right">Add Songs</p></a>
+            <a class="showcase_delete_songs" href="{% url 'modals:showcase_songs' %}" data-modal_content-url="{% url 'modals:showcase_songs' %}"><p class="text-primary text-right">Remove Showcase Songs</p></a> 
+        </div>
+    </div>
+</div>
+<br>
+<br>
+{% if user.is_authenticated %}
+    <div class='form-group' style="margin-left: 100px;">
+                {% csrf_token %}
+    </div>
+{% else %}
+    <br>
+    <h2>You cannot access this page without being logged in. Please log in and try again.</h2>
+{% endif %}
+
+{% else %}
+
+<div style = "height: 220px" class= "container-lg">
+    <h1>Welcome to {{ username }}'s profile!</h1> 
+    <div style = "height: 150px; border-style: 20px" class ="row">
+
+        <div style = "height: 200; float: left;" class = "col">
+            {% if profilePic == "" %}
+            <img src="{% static 'Default.png' %}" style="border-radius: 50%; display: block;" width="150" height="150">
+            {% else %}
+            <img src="/media/{{ profilePic }}" style="border-radius: 50%; display: block;" width="150" height="150">
+            {% endif %}
+        </div> 
+        <div style = "height: 150; text-align: right; padding-top: 0px;"class = "col">
+            <h3>Private Playlists: {{ privatePlaylists }}</h3>
+            <h3>Public Playlists: {{ publicPlaylists }}</h3>
+            <h3>Liked Songs: {{ likedSongs }}</h3>     
+        </div> 
+    </div>
+</div>
+
+<div style = "height: 850" class= "container-lg">
+</br>
+    <h2>Song Showcase</h2>
+    <div style="height: 400px; justify-content: space-between; border-radius: 20px; border:3px solid #C0C0C0" class="row">
+            <div id="many_rec" style="justify-content: left; white-space: nowrap; overflow-x:auto; display:flex" >
+                {% for track in songs %}
+                    {% include 'recommender/song_demo.html' %}
+                {% endfor %}
+            </div>
+    </div>
+<br>
+<br>
+{% endif %}
+
+
+<script>
+    $("#song_search_modal #save-modal").on("click", function (e) {
+        e.preventDefault();
+        var trackIDs = [];
+        $(".song-check").each(function(i, obj) {
+          if (obj.checked){
+            trackIDs.push(obj.id);
+          }
+        });
+    $.ajax({
+      type: 'POST',
+      url: "/modals/showcase_search_save/",
+      data: {csrfmiddlewaretoken: "{{ csrf_token }}", track_ids: trackIDs.join(" ")},
+      success: function (data) {
+        //If saving succeeds, refresh modal in place:
+        $.ajax({
+        url: 'profile/',
+        });
+        history.go(0);
+      }
+    });
+    $('#song_search_modal').modal('hide');
+    });
+
+    $("#clear_likes").on("click", function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: "/modals/clear_likes/",
+            data: {csrfmiddlewaretoken: "{{ csrf_token }}"},
+        success: function (data) {
+        $.ajax({
+            url: 'profile/',
+        });
+        history.go(0);
+      }
+    });
+    });
+
+    $("#song_showcase_modal #delete-modal").on("click", function (e) {
+        e.preventDefault();
+        var trackIDs = [];
+        $(".song-check").each(function(i, obj) {
+          if (obj.checked){
+            trackIDs.push(obj.id);
+          }
+        });
+    $.ajax({
+      type: 'POST',
+      url: "/modals/showcase_song_delete/",
+      data: {csrfmiddlewaretoken: "{{ csrf_token }}", track_ids: trackIDs.join(" ")},
+      success: function (data) {
+        //If saving succeeds, refresh modal in place:
+        $.ajax({
+        url: 'profile/',
+        });
+        history.go(0);
+      }
+    });
+    $('#song_showcase_modal').modal('hide');
+    });
+
+</script>
+{% endblock %}

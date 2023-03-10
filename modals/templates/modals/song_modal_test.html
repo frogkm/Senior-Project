@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<ul>
+  {% for song in songs %}
+  <li>
+  
+    <div class="banner" bannerid="{{ song.track_id }}">
+      <iframe src="https://open.spotify.com/embed/track/{{ song.track_id }}"
+            frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+    </div>
+
+
+  <a
+    class="song_search_link"
+    href="{% url 'modals:song' track_curr_id=song.track_id %}"
+    data-modal_content-url="{% url 'modals:song' track_curr_id=song.track_id %}">
+    <img src="{{ song.pictureLink }}" width="200" height="200">
+    {{song.track_name}}
+  </a></li>
+  {% endfor %}
+  </ul>
+
+{% endblock %}

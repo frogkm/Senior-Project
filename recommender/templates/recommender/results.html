@@ -1,0 +1,18 @@
+{% if albums %}
+    <table>
+    <tr>
+    {% for album in albums %}
+
+    <td>
+    <iframe src="https://open.spotify.com/embed/album/{{ album }}" width="300" height="380" 
+    frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+    </td>
+        
+    {% endfor %}
+    </tr>
+    </table>
+
+
+{% else %}
+    <p>No Albums Found</p>
+{% endif %}
